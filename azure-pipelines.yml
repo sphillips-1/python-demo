@@ -35,10 +35,9 @@ steps:
     replaceExistingArchive: true
 
 - task: AzureWebApp@1
-  displayName: 'Deploy Azure Web App : {{ webAppName }}'
   inputs:
-    azureSubscription: $(azureServiceConnectionId)
-    appName: $(webAppName)
-    package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
-    appType: 'webAppLinux' 
+    azureSubscription: 'Azure subscription 1(2cf64833-1e9f-4e52-ab37-4e7ea0e77717)'
+    appType: 'webAppLinux'
+    appName: 'python-demo'
+    package: '$(System.DefaultWorkingDirectory)/**/*.zip'
     startUpCommand: 'gunicorn --bind=0.0.0.0 --workers=4 startup:app'
