@@ -17,15 +17,43 @@ steps:
     architecture: 'x64'
 
 - task: CmdLine@2
+  displayName: "Install requirements"
   inputs:
-    script: |
+    script:|
          python -m venv antenv
          source antenv/bin/activate
          python -m pip install --upgrade pip
          pip install setup
          pip install -r requirements.txt
-    displayName: "Install requirements"
+ 
+- task: CmdLine@2
+  displayName: "Run lint tests"
+  inputs:|
+    python -m pip install flake8
+    flake8 .
+    
+- task: CmdLine@2
+  displayName: "Test with pytest"
+  inputs:|
+    pip install pytest
+    pip install pytest-cov
+    pytest tests --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html  
+    
+- task: PublishTestResults@2
+  condition: succeededOrFailed()
+  inputs:
+    testResultsFiles: '**/test-*.xml'
+    testRunTitle: 'Publish test results for Python $(python.version)'
 
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
+    reportDirectory: '$(System.DefaultWorkingDirectory)/**/htmlcov'    
+         
+- task: CmdLine@2
+  displayName: "Install requirements"
+  inputs:
 
 - task: ArchiveFiles@2
   inputs:
