@@ -26,12 +26,12 @@ steps:
          pip install setup
          pip install -r requirements.txt
  
-- task: CmdLine@2
-  displayName: "Run lint tests"
-  inputs:
-    script: |
-        python -m pip install flake8
-        flake8
+# - task: CmdLine@2
+  # displayName: "Run lint tests"
+  # inputs:
+    # script: |
+        # python -m pip install flake8
+        # flake8
     
 - task: CmdLine@2
   displayName: "Test with pytest"
