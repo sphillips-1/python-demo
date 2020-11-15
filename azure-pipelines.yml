@@ -16,15 +16,16 @@ steps:
     addToPath: true
     architecture: 'x64'
 
-- task: PythonScript@0
+- task: CmdLine@2
   inputs:
-    scriptSource: 'inline'
     script: |
+      |
       python -m venv antenv
       source antenv/bin/activate
       python -m pip install --upgrade pip
       pip install setup
       pip install -r requirements.txt
+    workingDirectory: '$(projectRoot)'
 
 - task: ArchiveFiles@2
   inputs:
