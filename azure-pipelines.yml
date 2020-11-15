@@ -10,14 +10,35 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- task: DotNetCoreCLI@2
+- task: UsePythonVersion@0
   inputs:
-    command: 'publish'
-    publishWebProjects: true
+    versionSpec: '3.7'
+    addToPath: true
+    architecture: 'x64'
+
+- task: PythonScript@0
+  inputs:
+    scriptSource: 'inline'
+    script: |
+      python -m venv antenv
+      source antenv/bin/activate
+      python -m pip install --upgrade pip
+      pip install setup
+      pip install -r requirements.txt
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.BinariesDirectory)'
+    includeRootFolder: true
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    replaceExistingArchive: true
 
 - task: AzureWebApp@1
+  displayName: 'Deploy Azure Web App : {{ webAppName }}'
   inputs:
-    azureSubscription: 'Azure subscription 1(2cf64833-1e9f-4e52-ab37-4e7ea0e77717)'
-    appType: 'webAppLinux'
-    appName: 'python-demo'
-    package: '$(System.DefaultWorkingDirectory)/**/*.zip'
+    azureSubscription: $(azureServiceConnectionId)
+    appName: $(webAppName)
+    package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
+    appType: 'webAppLinux' 
+    startUpCommand: 'gunicorn --bind=0.0.0.0 --workers=4 startup:app'
