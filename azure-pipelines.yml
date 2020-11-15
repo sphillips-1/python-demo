@@ -30,7 +30,7 @@ steps:
   displayName: "Run lint tests"
   inputs:|
     python -m pip install flake8
-    flake8 .
+    flake8
     
 - task: CmdLine@2
   displayName: "Test with pytest"
