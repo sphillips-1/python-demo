@@ -18,21 +18,28 @@ steps:
 
 - task: CmdLine@2
   inputs:
-    script: 'pip install -r requirements.txt'
+    script: '|
+         python -m venv antenv
+         source antenv/bin/activate
+         python -m pip install --upgrade pip
+         pip install setup
+         pip install -r requirements.txt'
+    displayName: "Install requirements"
 
 
 - task: ArchiveFiles@2
-  inputs:
-    rootFolderOrFile: '$(Build.BinariesDirectory)'
-    includeRootFolder: true
-    archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-    replaceExistingArchive: true
+   inputs:
+     rootFolderOrFile: '$(Build.SourcesDirectory)'
+     includeRootFolder: false
+     archiveType: 'zip'
+     archiveFile: '$(Build.ArtifactStagingDirectory)/Application$(Build.BuildId).zip'
+     replaceExistingArchive: true
+     verbose: # (no value); this input is optional
 
 - task: AzureWebApp@1
+  displayName: 'Deploy Azure Web App'
   inputs:
     azureSubscription: 'Azure subscription 1(2cf64833-1e9f-4e52-ab37-4e7ea0e77717)'
-    appType: 'webAppLinux'
     appName: 'python-demo'
     package: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-    #startUpCommand: 'gunicorn --bind=0.0.0.0 --workers=4 startup:app'
+    startUpCommand: 'gunicorn --bind=0.0.0.0 --workers=4 startup:app'
