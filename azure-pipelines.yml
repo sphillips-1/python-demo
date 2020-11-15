@@ -18,7 +18,7 @@ steps:
 
 - task: CmdLine@2
   inputs:
-    script: 'pip install -r Application/requirements.txt'
+    script: 'pip install -r python-demo/requirements.txt'
 
 
 - task: ArchiveFiles@2
