@@ -28,7 +28,8 @@ steps:
  
 - task: CmdLine@2
   displayName: "Run lint tests"
-  inputs:|
+  inputs:
+    script:|
     python -m pip install flake8
     flake8
     
