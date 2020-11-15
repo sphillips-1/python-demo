@@ -1,0 +1,23 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: true
+
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: 'Azure subscription 1(2cf64833-1e9f-4e52-ab37-4e7ea0e77717)'
+    appType: 'webAppLinux'
+    appName: 'python-demo'
+    package: '$(System.DefaultWorkingDirectory)/**/*.zip'
